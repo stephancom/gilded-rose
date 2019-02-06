@@ -55,6 +55,7 @@ class GildedRose
   def tick_phase_two
     return increment_quality if is_brie?
     return reset_quality if is_concert?
+    decrement_quality if is_mana?
     decrement_quality unless is_hand?
   end
 
