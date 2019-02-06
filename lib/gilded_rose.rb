@@ -12,6 +12,7 @@ class GildedRose
       if @quality > 0
         if @name != "Sulfuras, Hand of Ragnaros"
           @quality = @quality - 1
+          @quality = @quality - 1 if @quality > 0 && @name == "Conjured Mana Cake"
         end
       end
     else
@@ -40,6 +41,7 @@ class GildedRose
           if @quality > 0
             if @name != "Sulfuras, Hand of Ragnaros"
               @quality = @quality - 1
+              @quality = @quality - 1 if @name == "Conjured Mana Cake" && @quality > 0
             end
           end
         else
