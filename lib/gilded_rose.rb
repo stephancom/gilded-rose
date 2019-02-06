@@ -7,49 +7,58 @@ class GildedRose
     @quality = quality
   end
 
+  def clamp_quality(delta)
+    @quality = [[@quality + delta, 0].max, 50].min
+  end
+
+  def decrement_quality
+    clamp_quality(-1)
+  end
+
+  def increment_quality
+    clamp_quality(1)
+  end
+
+  def reset_quality
+    @quality = 0
+  end
+
+  def is_brie?
+    @name == 'Aged Brie'
+  end
+
+  def is_concert?
+    @name == 'Backstage passes to a TAFKAL80ETC concert'
+  end
+
+  def is_hand?
+    @name == 'Sulfuras, Hand of Ragnaros'
+  end
+
+  def tick_phase_one
+    if is_brie? || is_concert?
+      increment_quality
+      return unless is_concert?
+
+      increment_quality if @days_remaining < 11
+      increment_quality if @days_remaining < 6
+    elsif @quality < 50
+      decrement_quality unless is_hand?
+    end    
+  end
+
+  def tick_phase_two
+    return increment_quality if is_brie?
+    return reset_quality if is_concert?
+    decrement_quality unless is_hand?
+  end
+
   def tick
-    if @name != "Aged Brie" and @name != "Backstage passes to a TAFKAL80ETC concert"
-      if @quality > 0
-        if @name != "Sulfuras, Hand of Ragnaros"
-          @quality = @quality - 1
-        end
-      end
-    else
-      if @quality < 50
-        @quality = @quality + 1
-        if @name == "Backstage passes to a TAFKAL80ETC concert"
-          if @days_remaining < 11
-            if @quality < 50
-              @quality = @quality + 1
-            end
-          end
-          if @days_remaining < 6
-            if @quality < 50
-              @quality = @quality + 1
-            end
-          end
-        end
-      end
-    end
-    if @name != "Sulfuras, Hand of Ragnaros"
-      @days_remaining = @days_remaining - 1
-    end
-    if @days_remaining < 0
-      if @name != "Aged Brie"
-        if @name != "Backstage passes to a TAFKAL80ETC concert"
-          if @quality > 0
-            if @name != "Sulfuras, Hand of Ragnaros"
-              @quality = @quality - 1
-            end
-          end
-        else
-          @quality = @quality - @quality
-        end
-      else
-        if @quality < 50
-          @quality = @quality + 1
-        end
-      end
-    end
+    tick_phase_one
+
+    @days_remaining -= 1 unless is_hand?
+    return unless @days_remaining < 0
+
+    tick_phase_two
   end
 end
