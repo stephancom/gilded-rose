@@ -35,6 +35,10 @@ class GildedRose
     @name == 'Sulfuras, Hand of Ragnaros'
   end
 
+  def is_mana?
+    @name == 'Conjured Mana Cake'    
+  end
+
   def tick_phase_one
     if is_brie? || is_concert?
       increment_quality
@@ -43,6 +47,7 @@ class GildedRose
       increment_quality if @days_remaining < 11
       increment_quality if @days_remaining < 6
     elsif @quality < 50
+      decrement_quality if is_mana?
       decrement_quality unless is_hand?
     end    
   end
